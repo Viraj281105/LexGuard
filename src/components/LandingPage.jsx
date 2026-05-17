@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import { Scale } from "lucide-react";
+import { Scale, FileText } from "lucide-react";
 
 // ---------------------------------------------------------------------------
 // Reusable animated counter component — counts up when in view
@@ -207,45 +207,114 @@ export default function LandingPage({ onEnter }) {
           zIndex: 0,
         }} />
 
-        <div className="landing-hero-content">
-          <motion.h1
-            className="landing-hero-h1 font-display"
-            custom={0}
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-          >
-            Your contract has secrets.
-          </motion.h1>
+        {/* Two-column hero layout */}
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 60, maxWidth: 1100, padding: '0 24px', width: '100%' }}>
+          {/* Left column — headline + CTA */}
+          <div style={{ flex: '1 1 50%' }}>
+            <motion.h1
+              className="landing-hero-h1 font-display"
+              custom={0}
+              initial="hidden"
+              animate="visible"
+              variants={fadeUp}
+            >
+              Your contract has secrets.
+            </motion.h1>
 
-          <motion.h2
-            className="landing-hero-h2 font-display text-gradient"
-            custom={1}
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-          >
-            We find them.
-          </motion.h2>
+            <motion.h2
+              className="landing-hero-h2 font-display text-gradient"
+              custom={1}
+              initial="hidden"
+              animate="visible"
+              variants={fadeUp}
+            >
+              We find them.
+            </motion.h2>
 
-          <motion.p
-            className="landing-hero-sub font-body"
-            custom={2}
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-          >
-            LexGuard uses adversarial AI to read every clause, simulate
-            consequences, and arm you with counter-arguments — before you sign.
-          </motion.p>
+            <motion.p
+              className="landing-hero-sub font-body"
+              custom={2}
+              initial="hidden"
+              animate="visible"
+              variants={fadeUp}
+              style={{ marginLeft: 0 }}
+            >
+              LexGuard uses adversarial AI to read every clause, simulate
+              consequences, and arm you with counter-arguments — before you sign.
+            </motion.p>
 
+            <motion.div
+              custom={3}
+              initial="hidden"
+              animate="visible"
+              variants={fadeUp}
+            >
+              <GoldButton onClick={onEnter}>Analyze Your Contract</GoldButton>
+            </motion.div>
+          </div>
+
+          {/* Right column — mock contract danger preview (hidden on mobile) */}
           <motion.div
-            custom={3}
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            style={{ flex: '1 1 45%' }}
+            className="hidden md:block"
           >
-            <GoldButton onClick={onEnter}>Analyze Your Contract</GoldButton>
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              style={{
+                background: 'rgba(17, 17, 24, 0.8)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255, 59, 59, 0.15)',
+                borderRadius: 16,
+                padding: '28px 24px',
+                boxShadow: '0 0 40px rgba(255, 59, 59, 0.08), 0 4px 24px rgba(0,0,0,0.4)',
+              }}
+            >
+              {/* Card header */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid #22222E' }}>
+                <FileText size={16} style={{ color: '#C8A97E' }} />
+                <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '0.9rem', fontWeight: 600, color: '#F0EDE8' }}>NovaTech_Employment_Agreement.pdf</span>
+              </div>
+
+              {/* Clause row 1 */}
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <span style={{ fontSize: '0.88rem', fontWeight: 500, color: '#F0EDE8' }}>Intellectual Property Assignment</span>
+                  <span className="badge-critical">CRITICAL</span>
+                </div>
+                <div style={{ height: 8, borderRadius: 4, background: 'linear-gradient(90deg, rgba(154,148,144,0.15) 0%, rgba(154,148,144,0.05) 100%)', width: '85%' }} />
+                <div style={{ height: 8, borderRadius: 4, background: 'linear-gradient(90deg, rgba(154,148,144,0.1) 0%, rgba(154,148,144,0.03) 100%)', width: '60%', marginTop: 4 }} />
+              </div>
+
+              {/* Clause row 2 */}
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <span style={{ fontSize: '0.88rem', fontWeight: 500, color: '#F0EDE8' }}>Non-Compete Covenant</span>
+                  <span className="badge-critical">CRITICAL</span>
+                </div>
+                <div style={{ height: 8, borderRadius: 4, background: 'linear-gradient(90deg, rgba(154,148,144,0.15) 0%, rgba(154,148,144,0.05) 100%)', width: '90%' }} />
+                <div style={{ height: 8, borderRadius: 4, background: 'linear-gradient(90deg, rgba(154,148,144,0.1) 0%, rgba(154,148,144,0.03) 100%)', width: '55%', marginTop: 4 }} />
+              </div>
+
+              {/* Clause row 3 */}
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <span style={{ fontSize: '0.88rem', fontWeight: 500, color: '#F0EDE8' }}>Arbitration Agreement</span>
+                  <span className="badge-high">HIGH</span>
+                </div>
+                <div style={{ height: 8, borderRadius: 4, background: 'linear-gradient(90deg, rgba(154,148,144,0.15) 0%, rgba(154,148,144,0.05) 100%)', width: '75%' }} />
+                <div style={{ height: 8, borderRadius: 4, background: 'linear-gradient(90deg, rgba(154,148,144,0.1) 0%, rgba(154,148,144,0.03) 100%)', width: '45%', marginTop: 4 }} />
+              </div>
+
+              {/* Score footer */}
+              <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid #22222E', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '0.75rem', color: '#9A9490', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Risk Score</span>
+                <span style={{ fontSize: '1.4rem', fontWeight: 700, color: '#FF3B3B', fontFamily: "'JetBrains Mono', monospace" }}>32/100</span>
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </section>
@@ -253,39 +322,41 @@ export default function LandingPage({ onEnter }) {
       {/* ═══════════════════════════════════════════════════════════════════
           SECTION 2 — THE PROBLEM
           ═══════════════════════════════════════════════════════════════════ */}
-      <section className="landing-section" id="problem">
-        <motion.h2
-          className="landing-section-title font-display"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
-          variants={fadeUp}
-        >
-          Most people sign contracts they don't understand.
-        </motion.h2>
+      <section id="problem" style={{ background: '#111118', borderTop: '1px solid #22222E', borderBottom: '1px solid #22222E' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '96px 24px' }}>
+          <motion.h2
+            className="landing-section-title font-display"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-60px" }}
+            variants={fadeUp}
+          >
+            Most people sign contracts they don't understand.
+          </motion.h2>
 
-        <div className="landing-stats-row">
-          {stats.map((s, i) => (
-            <motion.div
-              key={i}
-              className="landing-stat-card surface-glass"
-              custom={i}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-60px" }}
-              variants={fadeUp}
-            >
-              <span className="landing-stat-number font-mono">
-                <AnimatedStat
-                  value={s.value}
-                  suffix={s.suffix}
-                  prefix={s.prefix || ""}
-                />
-              </span>
-              <span className="landing-stat-label font-body">{s.label}</span>
-              <span className="landing-stat-source">{s.source}</span>
-            </motion.div>
-          ))}
+          <div className="landing-stats-row">
+            {stats.map((s, i) => (
+              <motion.div
+                key={i}
+                className="landing-stat-card surface-glass"
+                custom={i}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-60px" }}
+                variants={fadeUp}
+              >
+                <span className="landing-stat-number font-mono">
+                  <AnimatedStat
+                    value={s.value}
+                    suffix={s.suffix}
+                    prefix={s.prefix || ""}
+                  />
+                </span>
+                <span className="landing-stat-label font-body">{s.label}</span>
+                <span className="landing-stat-source">{s.source}</span>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
