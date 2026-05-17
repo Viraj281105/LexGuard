@@ -1,9 +1,9 @@
 import React, { useCallback, lazy, Suspense, useReducer } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { DEMO_METADATA, DEMO_RESULT } from "./constants/demo";
 import { analyzeContract } from "./lib/ai";
+import { useAnalysis } from "./hooks/useAnalysis";
+import LandingPage from "./components/LandingPage";
 import UploadScreen from "./components/UploadScreen";
-
 import PipelineScreen from "./components/PipelineScreen";
 
 
@@ -47,135 +47,7 @@ const Header = () => (
   </header>
 );
 
-// Action types for reducer
-const ACTIONS = {
-  RESET: "reset",
-  SET_STATE: "set_state",
-  SET_ERROR: "set_error",
-  SET_DEMO: "set_demo",
-  TOGGLE_PLAIN: "toggle_plain",
-  DISMISS_ERROR: "dismiss_error",
-};
-
-// Initial reducer state
-const initialState = {
-  appState: "idle",
-  rawText: "",
-  fileName: "",
-  analysisResult: null,
-  errorMessage: "",
-  currentStage: 0,
-  currentStageLabel: "",
-  isPlainEnglish: false,
-};
-
-function reducer(state, action) {
-  switch (action.type) {
-    case ACTIONS.RESET:
-      return { ...initialState };
-    case ACTIONS.SET_STATE:
-      return { ...state, ...action.payload };
-    case ACTIONS.SET_ERROR:
-      return { ...state, appState: "error", errorMessage: action.payload };
-    case ACTIONS.SET_DEMO:
-      return {
-        ...state,
-        appState: "complete",
-        fileName: action.payload.fileName,
-        analysisResult: action.payload.result,
-      };
-    case ACTIONS.TOGGLE_PLAIN:
-      return { ...state, isPlainEnglish: !state.isPlainEnglish };
-    case ACTIONS.DISMISS_ERROR:
-      return { ...state, appState: "idle", errorMessage: "" };
-    default:
-      return state;
-  }
-}
-
-/**
- * Custom hook managing the LexGuard analysis state machine.
- * @returns {object} State values and action callbacks.
- */
-export function useAnalysis() {
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  const reset = useCallback(() => {
-    dispatch({ type: ACTIONS.RESET });
-  }, []);
-
-  const togglePlainEnglish = useCallback(() => {
-    dispatch({ type: ACTIONS.TOGGLE_PLAIN });
-  }, []);
-
-  const dismissError = useCallback(() => {
-    dispatch({ type: ACTIONS.DISMISS_ERROR });
-  }, []);
-
-  const loadDemo = useCallback(() => {
-    if (!DEMO_RESULT) {
-      dispatch({ type: ACTIONS.SET_ERROR, payload: "Demo data not yet loaded. Please upload a real contract." });
-      return;
-    }
-    dispatch({
-      type: ACTIONS.SET_DEMO,
-      payload: { fileName: DEMO_METADATA.title, result: DEMO_RESULT },
-    });
-  }, []);
-
-  // Dependencies imported at the top of the file
-
-  const analyzeFile = useCallback(
-    async (file) => {
-      try {
-        const validation = validateFile(file);
-        if (!validation.valid) {
-          dispatch({ type: ACTIONS.SET_ERROR, payload: validation.error });
-          return;
-        }
-        dispatch({ type: ACTIONS.SET_STATE, payload: { appState: "uploading", fileName: file.name } });
-        const raw = await extractTextFromPDF(file);
-        dispatch({ type: ACTIONS.SET_STATE, payload: { rawText: raw, appState: "analyzing" } });
-        const result = await analyzeContract(raw, (stage, label) => {
-          dispatch({ type: ACTIONS.SET_STATE, payload: { currentStage: stage, currentStageLabel: label } });
-        });
-        dispatch({ type: ACTIONS.SET_STATE, payload: { analysisResult: result, appState: "complete" } });
-      } catch (err) {
-        dispatch({ type: ACTIONS.SET_ERROR, payload: err.message || "An unexpected error occurred during analysis." });
-      }
-    },
-    []
-  );
-
-  const analyzeText = useCallback(
-    async (text) => {
-      if (!text || text.trim().length < 50) {
-        dispatch({ type: ACTIONS.SET_ERROR, payload: "Please paste a valid contract — the text is too short." });
-        return;
-      }
-      dispatch({ type: ACTIONS.SET_STATE, payload: { rawText: text, appState: "analyzing" } });
-      try {
-        const result = await analyzeContract(text, (stage, label) => {
-          dispatch({ type: ACTIONS.SET_STATE, payload: { currentStage: stage, currentStageLabel: label } });
-        });
-        dispatch({ type: ACTIONS.SET_STATE, payload: { analysisResult: result, appState: "complete" } });
-      } catch (err) {
-        dispatch({ type: ACTIONS.SET_ERROR, payload: err.message || "Analysis failed." });
-      }
-    },
-    []
-  );
-
-  return {
-    ...state,
-    analyzeFile,
-    analyzeText,
-    loadDemo,
-    reset,
-    togglePlainEnglish,
-    dismissError,
-  };
-}
+// State machine is imported from ./hooks/useAnalysis
 
 /**
  * Root application component handling screen routing and transitions.
@@ -193,6 +65,7 @@ const App = () => {
     analyzeFile,
     analyzeText,
     loadDemo,
+    enterApp,
     reset,
     togglePlainEnglish,
     dismissError,
@@ -201,6 +74,9 @@ const App = () => {
   // Determine which screen component to render based on state
   const renderScreen = () => {
     switch (appState) {
+      case "landing":
+        return <LandingPage onEnter={enterApp} />;
+
       case "idle":
         return <UploadScreen onFileUpload={analyzeFile} onTextSubmit={analyzeText} onLoadDemo={loadDemo} />;
 
@@ -210,7 +86,7 @@ const App = () => {
 
       case "complete":
         return (
-          <DashboardStub
+          <DashboardScreen
             analysisResult={analysisResult}
             fileName={fileName}
             isPlainEnglish={isPlainEnglish}
@@ -220,7 +96,7 @@ const App = () => {
         );
       case "demo":
         return (
-          <DashboardStub
+          <DashboardScreen
             analysisResult={analysisResult}
             fileName={fileName}
             isPlainEnglish={isPlainEnglish}
@@ -236,9 +112,11 @@ const App = () => {
     }
   };
 
+  const isLanding = appState === "landing";
+
   return (
     <div className="relative min-h-screen bg-base-bg bg-grid bg-radial-glow text-white">
-      <Header />
+      {!isLanding && <Header />}
       <AnimatePresence mode="wait">
         <motion.div
           key={appState}
@@ -246,7 +124,7 @@ const App = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.4 }}
-          className="pt-12 flex items-center justify-center"
+          className={isLanding ? "" : "pt-12 flex items-center justify-center"}
         >
           {renderScreen()}
 

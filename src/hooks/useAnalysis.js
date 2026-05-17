@@ -2,12 +2,13 @@
 import { useReducer, useCallback } from 'react';
 import { validateFile, extractTextFromPDF } from '../lib/pdfParser.js';
 import { analyzeContract } from '../lib/ai.js';
-import { DEMO_RESULT, DEMO_METADATA } from '../constants/demo.js';
+import { DEMO_RESULT } from '../constants/demo.js';
 
 // -----------------------------------------------------------------------------
 // State machine enum – keep as plain strings for simplicity
 // -----------------------------------------------------------------------------
 export const AppStates = Object.freeze({
+  LANDING: 'landing',
   IDLE: 'idle',
   UPLOADING: 'uploading',
   ANALYZING: 'analyzing',
@@ -26,6 +27,7 @@ const ActionTypes = {
   SET_ANALYZING: 'SET_ANALYZING',
   SET_COMPLETE: 'SET_COMPLETE',
   SET_DEMO: 'SET_DEMO',
+  ENTER_APP: 'ENTER_APP',
   RESET: 'RESET',
   TOGGLE_PLAIN_ENGLISH: 'TOGGLE_PLAIN_ENGLISH',
   UPDATE_STAGE: 'UPDATE_STAGE',
@@ -38,7 +40,7 @@ const ActionTypes = {
 // Initial state – matches the schema required by the UI
 // -----------------------------------------------------------------------------
 const initialState = {
-  appState: AppStates.IDLE,
+  appState: AppStates.LANDING,
   rawText: '',
   fileName: '',
   analysisResult: null,
@@ -95,6 +97,8 @@ function reducer(state, action) {
         fileName: action.meta?.fileName ?? state.fileName,
         errorMessage: '',
       };
+    case ActionTypes.ENTER_APP:
+      return { ...state, appState: AppStates.IDLE };
     case ActionTypes.RESET:
       return { ...initialState };
     case ActionTypes.TOGGLE_PLAIN_ENGLISH:
@@ -165,7 +169,7 @@ export function useAnalysis() {
       dispatch({ type: ActionTypes.SET_ERROR, payload: e.message || 'Analysis failed.' });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [state.rawText]);
 
   // ---------------------------------------------------------------------------
   // Action: analyze raw pasted text
@@ -201,13 +205,19 @@ export function useAnalysis() {
       });
       return;
     }
-    const demoFileName = DEMO_METADATA.title || 'Demo Contract';
     dispatch({
       type: ActionTypes.SET_DEMO,
       payload: DEMO_RESULT,
-      meta: { fileName: demoFileName },
+      meta: { fileName: "NovaTech — Employment Agreement.pdf" },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ---------------------------------------------------------------------------
+  // Action: enter the app from the landing page
+  // ---------------------------------------------------------------------------
+  const enterApp = useCallback(() => {
+    dispatch({ type: ActionTypes.ENTER_APP });
   }, []);
 
   // ---------------------------------------------------------------------------
@@ -246,6 +256,7 @@ export function useAnalysis() {
     analyzeFile,
     analyzeText,
     loadDemo,
+    enterApp,
     reset,
     togglePlainEnglish,
     dismissError,
