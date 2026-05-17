@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileText, ArrowLeft, ToggleLeft, ToggleRight, AlertTriangle } from "lucide-react";
+import { FileText, ArrowLeft, ToggleLeft, ToggleRight, AlertTriangle, Search, ExternalLink } from "lucide-react";
 import clsx from "clsx";
 import VitalsPanel from "./VitalsPanel";
 import ClauseCard from "./ClauseCard";
@@ -32,6 +32,7 @@ export default function DashboardScreen({
     mediumCount,
     lowCount,
     clauses,
+    legalSources = [],
   } = analysisResult;
 
   const filteredClauses = clauses.filter((c) => 
@@ -54,6 +55,11 @@ export default function DashboardScreen({
           <div className="flex items-center gap-2 text-sm">
             <FileText className="w-4 h-4 text-[#C8A97E]" />
             <span className="text-white truncate max-w-[300px]">{fileName}</span>
+          </div>
+          <div className="h-4 w-px bg-[#22222E]" />
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#C8A97E]/10 border border-[#C8A97E]/30">
+            <Search className="w-3 h-3 text-[#C8A97E]" />
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-[#C8A97E]">Search Grounded</span>
           </div>
         </div>
 
@@ -159,6 +165,37 @@ export default function DashboardScreen({
           {isPlainEnglish ? summary.plainEnglish : summary.legal}
         </p>
       </div>
+
+      {/* GROUNDED LEGAL SOURCES */}
+      {legalSources.length > 0 && (
+        <div className="surface-glass rounded-2xl p-6 mt-6">
+          <h3 className="text-[10px] font-semibold uppercase tracking-widest text-[#C8A97E] mb-4 flex items-center gap-2">
+            <Search className="w-3.5 h-3.5" />
+            Grounded Legal Sources
+          </h3>
+          <div className="space-y-3">
+            {legalSources.map((source, idx) => (
+              <a
+                key={idx}
+                href={source.uri}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-3 group p-3 rounded-lg hover:bg-white/[0.03] transition-colors"
+              >
+                <ExternalLink className="w-4 h-4 text-[#C8A97E] mt-0.5 shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-sm text-white group-hover:text-[#C8A97E] transition-colors truncate">
+                    {source.title}
+                  </p>
+                  <p className="text-xs text-[#9A9490] underline underline-offset-2 truncate mt-0.5">
+                    {source.uri}
+                  </p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

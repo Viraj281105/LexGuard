@@ -92,6 +92,13 @@ export const DEMO_RESULT = {
     highCount: 2,
     mediumCount: 1,
     lowCount: 0,
+    legalSources: [
+        { title: "California Labor Code § 2870 — Employee Invention Protections", uri: "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=2870.&lawCode=LAB" },
+        { title: "FTC Non-Compete Clause Rule — Final Rule 2024", uri: "https://www.ftc.gov/legal-library/browse/rules/noncompete-rule" },
+        { title: "Ending Forced Arbitration of Sexual Assault and Sexual Harassment Act", uri: "https://www.congress.gov/bill/117th-congress/house-bill/4445" },
+        { title: "NLRB Guidance on Non-Disparagement Provisions (McLaren Macomb)", uri: "https://www.nlrb.gov/about-nlrb/rights-we-protect/your-rights/employer-union-rights-and-obligations" },
+        { title: "Electronic Communications Privacy Act (ECPA) Overview", uri: "https://bja.ojp.gov/program/it/privacy-civil-liberties/authorities/statutes/1285" },
+    ],
     clauses: [
         {
             id: "clause_01",
