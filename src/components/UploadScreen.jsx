@@ -138,7 +138,7 @@ export default function UploadScreen({ onFileUpload, onTextSubmit, onLoadDemo })
               <textarea
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                className="w-full h-48 bg-surface-glass backdrop-blur-md rounded p-3 text-white placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-gold-500 resize-none"
+                className="w-full h-48 rounded p-3 resize-none placeholder:text-text-muted bg-[#111118] text-white border border-[#22222E] focus:border-[#C8A97E] focus:outline-none"
                 placeholder="Paste your employment agreement, terms of service, freelance contract, or any legal document here..."
               />
               <div className="w-full flex justify-between items-center mt-2">
