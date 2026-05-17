@@ -1,3 +1,4 @@
+/** Main analysis dashboard showing clause cards, vitals, and grounded legal sources. */
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FileText, ArrowLeft, ToggleLeft, ToggleRight, AlertTriangle, Search, ExternalLink } from "lucide-react";
@@ -46,6 +47,7 @@ export default function DashboardScreen({
         <div className="flex items-center gap-4">
           <button
             onClick={onReset}
+            aria-label="Back to upload screen"
             className="flex items-center gap-2 text-sm text-[#9A9490] hover:text-white transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -67,6 +69,8 @@ export default function DashboardScreen({
 
         <button
           onClick={onTogglePlainEnglish}
+          aria-label="Toggle plain English mode"
+          aria-pressed={isPlainEnglish}
           className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-white"
         >
           <span className={clsx(isPlainEnglish ? "text-[#C8A97E]" : "text-[#9A9490]")}>
@@ -117,6 +121,8 @@ export default function DashboardScreen({
             <button
               key={filter}
               onClick={() => setActiveFilter(filter)}
+              aria-label={`Filter by ${filter}`}
+              aria-pressed={activeFilter === filter}
               className={clsx(
                 "px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border",
                 activeFilter === filter

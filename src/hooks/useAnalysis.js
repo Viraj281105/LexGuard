@@ -1,3 +1,4 @@
+/** Core state machine and reducer for LexGuard analysis workflow. */
 // src/hooks/useAnalysis.js — Core state machine for LexGuard analysis
 import { useReducer, useCallback } from 'react';
 import { validateFile, extractTextFromPDF } from '../lib/pdfParser.js';

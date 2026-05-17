@@ -1,3 +1,4 @@
+/** Expandable clause card with Courtroom tabs, Consequence Simulator, Negotiation Punch, Plain English toggle, and TTS. */
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Volume2, Square } from "lucide-react";
@@ -219,10 +220,12 @@ export default function ClauseCard({ clause, isPlainEnglish = false }) {
           <SectionLabel>⚖️ Clause Courtroom</SectionLabel>
 
           {/* Tab bar */}
-          <div className="flex border-b border-[#22222E] mb-3">
+          <div role="tablist" className="flex border-b border-[#22222E] mb-3">
             {COURTROOM_TABS.map((tab) => (
               <button
                 key={tab.key}
+                role="tab"
+                aria-selected={courtroomTab === tab.key}
                 onClick={() => setCourtroomTab(tab.key)}
                 className={clsx(
                   "flex-1 pb-2 text-xs font-semibold tracking-wide transition-colors",
@@ -240,6 +243,7 @@ export default function ClauseCard({ clause, isPlainEnglish = false }) {
           <AnimatePresence mode="wait">
             <motion.div
               key={courtroomTab}
+              role="tabpanel"
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
@@ -253,6 +257,7 @@ export default function ClauseCard({ clause, isPlainEnglish = false }) {
                   </p>
                   <button
                     onClick={handleTTS}
+                    aria-label={ttsState === 'playing' ? 'Stop audio' : 'Listen to prosecution'}
                     className="absolute top-0 right-0 p-1 cursor-pointer border-0 bg-transparent transition-colors"
                     title={ttsState === "playing" ? "Stop narration" : "Listen to prosecution"}
                   >
