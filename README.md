@@ -120,13 +120,17 @@ DASHBOARD OUTPUT
 | **TailwindCSS v3** | Dark premium design system with fully custom utility classes and glass-morphism surfaces |
 | **Framer Motion** | Pipeline animation, clause card entrances, and AnimatePresence transitions |
 | **Recharts** | Risk radar chart comparing contract profiles across five dimensions |
-| **Gemini 2.0 Flash** | Seven-stage adversarial AI reasoning — all stages in a single API call |
-| **Google Search Grounding** | Real-time legal source retrieval (RAG) — statutes, case law, regulatory guidance |
-| **Cloud Text-to-Speech** | Dramatic courtroom audio narration of prosecution arguments via Web Audio API |
 | **pdfjs-dist** | Client-side PDF parsing — no server required, zero latency on extraction |
-| **Firebase Hosting** | Real-time GCP deployment via CDN — global low-latency delivery |
 
 **No bloat. Every dependency earns its place.**
+
+## Google Services Used
+- **Gemini 2.0 Flash** — 7-stage adversarial contract analysis with structured JSON output
+- **Google Search Grounding** — real-time legal source citations via Gemini grounding API
+- **Google Cloud Text-to-Speech** — Neural2 voice narration of prosecution arguments  
+- **Firebase Hosting** — production deployment on Google Cloud Platform
+- **Google Cloud Functions** — recommended production architecture for server-side API proxy
+- **Gemini AI/ML API** — adversarial prompt engineering, structured outputs, multi-stage reasoning
 
 ---
 

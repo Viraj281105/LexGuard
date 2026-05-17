@@ -104,6 +104,17 @@ function StageRow({ stage, index, currentStage }) {
 // ---------------------------------------------------------------------------
 // Main PipelineScreen component
 // ---------------------------------------------------------------------------
+/**
+ * Animated pipeline loading screen shown while Gemini analyzes the contract.
+ * Displays the 7 adversarial reasoning stages as a vertical timeline with
+ * pulsing indicators, completion checkmarks, and an active stage callout.
+ *
+ * @param {object} props
+ * @param {number} [props.currentStage=0]      - 0-indexed stage currently being processed.
+ * @param {string} [props.currentStageLabel=''] - Human-readable label for the active stage.
+ * @param {string} [props.fileName='']          - Name of the file being analyzed (shown in header).
+ * @returns {React.ReactElement}
+ */
 export default function PipelineScreen({ currentStage = 0, currentStageLabel = "", fileName = "" }) {
   return (
     <motion.div

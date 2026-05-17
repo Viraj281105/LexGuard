@@ -163,6 +163,16 @@ function GoldButton({ children, onClick, floating = false }) {
 // ---------------------------------------------------------------------------
 // Main Component
 // ---------------------------------------------------------------------------
+/**
+ * Full-page marketing landing screen with hero section, problem statistics,
+ * 7-stage AI pipeline visualization, radar risk chart, and final CTA.
+ * Rendered when the app is in the LANDING state.
+ *
+ * @param {object}   props
+ * @param {function} props.onEnter - Callback invoked when the user clicks any CTA button
+ *   to transition from the landing page into the upload/analysis workflow.
+ * @returns {React.ReactElement}
+ */
 export default function LandingPage({ onEnter }) {
   return (
     <div className="landing-root" style={{ position: 'relative', zIndex: 1 }}>

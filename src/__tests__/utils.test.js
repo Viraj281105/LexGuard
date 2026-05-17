@@ -82,4 +82,42 @@ describe('utils', () => {
       expect(truncate(longString)).toBe(expected);
     });
   });
+
+  // ── Additional edge-case tests ──
+
+  describe('edge cases', () => {
+    it('truncate returns empty string for empty input', () => {
+      expect(truncate('')).toBe('');
+      expect(truncate('', 10)).toBe('');
+    });
+
+    it('truncate returns empty string for null/undefined input', () => {
+      expect(truncate(null)).toBe('');
+      expect(truncate(undefined)).toBe('');
+    });
+
+    it('getCategoryMeta falls back to general for null input', () => {
+      const meta = getCategoryMeta(null);
+      expect(meta.label).toBe('General');
+      expect(meta.icon).toBe('📄');
+    });
+
+    it('scoreToRiskLevel handles boundary value 51 as medium', () => {
+      expect(scoreToRiskLevel(51)).toBe('medium');
+    });
+
+    it('scoreToRiskLevel handles boundary value 75 as medium', () => {
+      expect(scoreToRiskLevel(75)).toBe('medium');
+    });
+
+    it('cn resolves multiple overlapping tailwind conflicts', () => {
+      const result = cn('text-sm text-red-500 p-2', 'text-lg text-blue-500 p-4');
+      expect(result).toContain('text-lg');
+      expect(result).toContain('text-blue-500');
+      expect(result).toContain('p-4');
+      expect(result).not.toContain('text-sm');
+      expect(result).not.toContain('text-red-500');
+      expect(result).not.toContain('p-2');
+    });
+  });
 });

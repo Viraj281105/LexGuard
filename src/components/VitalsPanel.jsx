@@ -117,6 +117,17 @@ function useCountUp(target, duration = 1500) {
 // ---------------------------------------------------------------------------
 // VitalsPanel component
 // ---------------------------------------------------------------------------
+/**
+ * Renders the Contract Vitals Monitor — an animated hero score display
+ * with five independent risk dimension gauge bars and a contextual footer.
+ *
+ * @param {object} props
+ * @param {object} props.vitals - Object with keys: financialRisk, privacyExposure,
+ *   powerBalance, exitFreedom, ipOwnershipRisk — each a number 0–100 (higher = more danger).
+ * @param {number} [props.overallScore=0] - Contract health score 0–100 (lower = more dangerous).
+ * @param {'critical'|'high'|'medium'|'low'} [props.riskLevel='medium'] - Overall risk classification.
+ * @returns {React.ReactElement}
+ */
 export default function VitalsPanel({ vitals = {}, overallScore = 0, riskLevel = "medium" }) {
   const displayScore = useCountUp(overallScore, 1500);
   const scoreColor = colorForValue(overallScore, true);
@@ -166,7 +177,14 @@ export default function VitalsPanel({ vitals = {}, overallScore = 0, riskLevel =
               </span>
 
               {/* Bar */}
-              <div className="flex-1 h-1.5 rounded-full bg-[#22222E] overflow-hidden">
+              <div
+                role="meter"
+                aria-label={`${vital.label} gauge`}
+                aria-valuenow={value}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                className="flex-1 h-1.5 rounded-full bg-[#22222E] overflow-hidden"
+              >
                 <motion.div
                   className="h-full rounded-full"
                   style={{ backgroundColor: barColor }}

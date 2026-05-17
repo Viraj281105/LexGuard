@@ -8,6 +8,19 @@ import ClauseCard from "./ClauseCard";
 
 const SEVERITY_FILTERS = ["All", "Critical", "High", "Medium", "Low"];
 
+/**
+ * Main analysis dashboard — renders the command bar, metadata summary,
+ * vitals panel, severity-filtered clause cards, executive summary,
+ * and grounded legal sources section.
+ *
+ * @param {object}   props
+ * @param {object}   props.analysisResult      - The complete Gemini analysis result object.
+ * @param {string}   props.fileName            - Name of the uploaded file (displayed in the command bar).
+ * @param {boolean}  props.isPlainEnglish      - Whether plain English mode is active.
+ * @param {function} props.onTogglePlainEnglish - Callback to toggle plain English mode.
+ * @param {function} props.onReset             - Callback to reset the workflow back to the upload screen.
+ * @returns {React.ReactElement|null}
+ */
 export default function DashboardScreen({
   analysisResult,
   fileName,

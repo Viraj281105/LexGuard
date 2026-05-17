@@ -49,6 +49,20 @@ function SectionLabel({ children }) {
 // ---------------------------------------------------------------------------
 // ClauseCard
 // ---------------------------------------------------------------------------
+
+/**
+ * Renders an expandable clause analysis card with all LexGuard features.
+ *
+ * @param {object}  props
+ * @param {object}  props.clause         - A single clause object from the Gemini analysis result.
+ *   Includes: id, title, category, severity, originalText, legalExplanation, plainEnglish,
+ *   isIndustryStandard, courtroom ({ prosecution, defense, verdict }),
+ *   consequences ([{ scenario, outcome, severity }]),
+ *   negotiationPunch ({ original, suggested, reasoning }).
+ * @param {boolean} [props.isPlainEnglish=false] - When true, displays plain English explanations
+ *   instead of formal legal analysis.
+ * @returns {React.ReactElement|null}
+ */
 export default function ClauseCard({ clause, isPlainEnglish = false }) {
   const [courtroomTab, setCourtroomTab] = useState("prosecution");
   const [ttsState, setTtsState] = useState("idle");
@@ -83,18 +97,26 @@ export default function ClauseCard({ clause, isPlainEnglish = false }) {
   } = clause;
 
   // ── TTS Handler ──
+  // This handler manages a 3-state lifecycle: idle → loading → playing.
+  // It calls the Google Cloud Text-to-Speech REST API with the prosecution
+  // argument text, receives base64-encoded MP3 audio, decodes it into a
+  // raw ArrayBuffer, then plays it through the Web Audio API.
+  // The audioRef and sourceRef are used for cleanup on unmount.
   const handleTTS = async () => {
+    // If already playing, stop the current audio source and reset to idle
     if (ttsState === "playing") {
       try { sourceRef.current?.stop(); } catch {}
       setTtsState("idle");
       return;
     }
 
+    // Guard against double-clicks while audio is loading
     if (ttsState === "loading") return;
 
     setTtsState("loading");
 
     try {
+      // Step 1: Call Google Cloud TTS REST API with Neural2-D male voice
       const ttsUrl = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${import.meta.env.VITE_GOOGLE_TTS_KEY}`;
 
       const res = await fetch(ttsUrl, {
@@ -109,10 +131,11 @@ export default function ClauseCard({ clause, isPlainEnglish = false }) {
 
       if (!res.ok) throw new Error("TTS request failed");
 
+      // Step 2: Extract the base64-encoded audio from the JSON response
       const data = await res.json();
       const audioContent = data.audioContent;
 
-      // Decode base64 to ArrayBuffer
+      // Step 3: Decode base64 string → binary → Uint8Array → ArrayBuffer
       const binaryStr = atob(audioContent);
       const bytes = new Uint8Array(binaryStr.length);
       for (let i = 0; i < binaryStr.length; i++) {
@@ -120,26 +143,30 @@ export default function ClauseCard({ clause, isPlainEnglish = false }) {
       }
       const arrayBuffer = bytes.buffer;
 
-      // Play via Web Audio API
+      // Step 4: Create a new AudioContext and decode the MP3 ArrayBuffer
       const ctx = new AudioContext();
       audioRef.current = ctx;
 
+      // Step 5: Play the decoded audio buffer through the Web Audio API
       ctx.decodeAudioData(arrayBuffer, (decodedBuffer) => {
         const source = ctx.createBufferSource();
         source.buffer = decodedBuffer;
         source.connect(ctx.destination);
         sourceRef.current = source;
-        source.onended = () => setTtsState("idle");
+        source.onended = () => setTtsState("idle"); // auto-reset when audio ends
         source.start();
         setTtsState("playing");
       });
     } catch {
+      // Any failure (network, decoding, playback) silently resets to idle
       setTtsState("idle");
     }
   };
 
   return (
     <motion.div
+      role="article"
+      aria-label={title}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
@@ -181,7 +208,7 @@ export default function ClauseCard({ clause, isPlainEnglish = false }) {
       {/* ================================================================
           SECTION 2 — Original Clause Text
           ================================================================ */}
-      <div className="px-6 py-4 border-b border-[#22222E]">
+      <div role="region" aria-label="Original clause text" className="px-6 py-4 border-b border-[#22222E]">
         <SectionLabel>Original Clause</SectionLabel>
         <div className="border-l-2 border-[#C8A97E]/40 bg-[#0A0A0F]/60 rounded-r-lg px-4 py-3">
           <p className="text-sm italic text-[#9A9490] leading-relaxed" style={{ fontFamily: "var(--font-legal)" }}>
@@ -226,6 +253,7 @@ export default function ClauseCard({ clause, isPlainEnglish = false }) {
                 key={tab.key}
                 role="tab"
                 aria-selected={courtroomTab === tab.key}
+                aria-controls={`courtroom-tabpanel-${clause.id}`}
                 onClick={() => setCourtroomTab(tab.key)}
                 className={clsx(
                   "flex-1 pb-2 text-xs font-semibold tracking-wide transition-colors",
@@ -244,6 +272,7 @@ export default function ClauseCard({ clause, isPlainEnglish = false }) {
             <motion.div
               key={courtroomTab}
               role="tabpanel"
+              id={`courtroom-tabpanel-${clause.id}`}
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
@@ -286,7 +315,7 @@ export default function ClauseCard({ clause, isPlainEnglish = false }) {
           SECTION 5 — Consequence Simulator
           ================================================================ */}
       {consequences && consequences.length > 0 && (
-        <div className="px-6 py-4 border-b border-[#22222E]">
+        <div role="region" aria-label="Consequence simulator" className="px-6 py-4 border-b border-[#22222E]">
           <SectionLabel>Consequence Simulator</SectionLabel>
           <div className="space-y-3">
             {consequences.map((c, i) => (
@@ -316,7 +345,7 @@ export default function ClauseCard({ clause, isPlainEnglish = false }) {
           SECTION 6 — Negotiation Punch
           ================================================================ */}
       {negotiationPunch && (
-        <div className="px-6 py-4">
+        <div role="region" aria-label="Negotiation punch" className="px-6 py-4">
           <SectionLabel>👊 Negotiation Punch</SectionLabel>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-1">
