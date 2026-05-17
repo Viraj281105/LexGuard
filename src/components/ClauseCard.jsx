@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Volume2, Square } from "lucide-react";
 import clsx from "clsx";
 
 // ---------------------------------------------------------------------------
@@ -49,6 +50,21 @@ function SectionLabel({ children }) {
 // ---------------------------------------------------------------------------
 export default function ClauseCard({ clause, isPlainEnglish = false }) {
   const [courtroomTab, setCourtroomTab] = useState("prosecution");
+  const [ttsState, setTtsState] = useState("idle");
+  const audioRef = useRef(null);
+  const sourceRef = useRef(null);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      try { sourceRef.current?.stop(); } catch {}
+      try {
+        if (audioRef.current && audioRef.current.state !== "closed") {
+          audioRef.current.close();
+        }
+      } catch {}
+    };
+  }, []);
 
   if (!clause) return null;
 
@@ -64,6 +80,62 @@ export default function ClauseCard({ clause, isPlainEnglish = false }) {
     consequences,
     negotiationPunch,
   } = clause;
+
+  // ── TTS Handler ──
+  const handleTTS = async () => {
+    if (ttsState === "playing") {
+      try { sourceRef.current?.stop(); } catch {}
+      setTtsState("idle");
+      return;
+    }
+
+    if (ttsState === "loading") return;
+
+    setTtsState("loading");
+
+    try {
+      const ttsUrl = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${import.meta.env.VITE_GOOGLE_TTS_KEY}`;
+
+      const res = await fetch(ttsUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          input: { text: courtroom.prosecution },
+          voice: { languageCode: "en-US", name: "en-US-Neural2-D", ssmlGender: "MALE" },
+          audioConfig: { audioEncoding: "MP3", pitch: -2, speakingRate: 0.9 },
+        }),
+      });
+
+      if (!res.ok) throw new Error("TTS request failed");
+
+      const data = await res.json();
+      const audioContent = data.audioContent;
+
+      // Decode base64 to ArrayBuffer
+      const binaryStr = atob(audioContent);
+      const bytes = new Uint8Array(binaryStr.length);
+      for (let i = 0; i < binaryStr.length; i++) {
+        bytes[i] = binaryStr.charCodeAt(i);
+      }
+      const arrayBuffer = bytes.buffer;
+
+      // Play via Web Audio API
+      const ctx = new AudioContext();
+      audioRef.current = ctx;
+
+      ctx.decodeAudioData(arrayBuffer, (decodedBuffer) => {
+        const source = ctx.createBufferSource();
+        source.buffer = decodedBuffer;
+        source.connect(ctx.destination);
+        sourceRef.current = source;
+        source.onended = () => setTtsState("idle");
+        source.start();
+        setTtsState("playing");
+      });
+    } catch {
+      setTtsState("idle");
+    }
+  };
 
   return (
     <motion.div
@@ -174,9 +246,32 @@ export default function ClauseCard({ clause, isPlainEnglish = false }) {
               transition={{ duration: 0.2 }}
               className={clsx("rounded-lg px-4 py-3", TAB_TINT[courtroomTab])}
             >
-              <p className="text-sm leading-relaxed text-white/85">
-                {courtroom[courtroomTab]}
-              </p>
+              {courtroomTab === "prosecution" ? (
+                <div className="relative">
+                  <p className="text-sm leading-relaxed text-white/85 pr-8">
+                    {courtroom.prosecution}
+                  </p>
+                  <button
+                    onClick={handleTTS}
+                    className="absolute top-0 right-0 p-1 cursor-pointer border-0 bg-transparent transition-colors"
+                    title={ttsState === "playing" ? "Stop narration" : "Listen to prosecution"}
+                  >
+                    {ttsState === "idle" && (
+                      <Volume2 className="w-4 h-4 text-[#C8A97E]/60 hover:text-[#C8A97E] transition-colors" />
+                    )}
+                    {ttsState === "loading" && (
+                      <div className="w-4 h-4 rounded-full border-2 border-[#C8A97E]/30 border-t-[#C8A97E] animate-spin" />
+                    )}
+                    {ttsState === "playing" && (
+                      <Square className="w-4 h-4 text-[#C8A97E]" />
+                    )}
+                  </button>
+                </div>
+              ) : (
+                <p className="text-sm leading-relaxed text-white/85">
+                  {courtroom[courtroomTab]}
+                </p>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
