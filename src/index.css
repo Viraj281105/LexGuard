@@ -307,10 +307,10 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -55%);
-  width: 600px;
-  height: 400px;
+  width: 700px;
+  height: 500px;
   border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(200, 169, 126, 0.10) 0%, transparent 70%);
+  background: radial-gradient(ellipse at center, rgba(200,169,126,0.12) 0%, rgba(200,169,126,0.04) 40%, transparent 70%);
   animation: heroGlowPulse 4s ease-in-out infinite;
   pointer-events: none;
   z-index: 0;
@@ -490,12 +490,12 @@
 
 /* ── Radar Chart Wrapper ── */
 .landing-radar-wrap {
-  max-width: 560px;
+  max-width: 680px;
   margin: 0 auto;
-  background: rgba(17, 17, 24, 0.5);
-  border: 1px solid rgba(200, 169, 126, 0.08);
+  background: rgba(17, 17, 24, 0.6);
+  border: 1px solid rgba(200, 169, 126, 0.12);
   border-radius: 16px;
-  padding: 32px 16px 24px;
+  padding: 32px 24px 24px;
 }
 
 .landing-radar-caption {
@@ -582,11 +582,30 @@
 
 @keyframes heroGlowPulse {
   0%, 100% {
-    opacity: 0.6;
+    opacity: 0.7;
     transform: translate(-50%, -55%) scale(1);
   }
   50% {
     opacity: 1;
-    transform: translate(-50%, -55%) scale(1.15);
+    transform: translate(-50%, -55%) scale(1.2);
   }
+}
+
+@keyframes radarDangerPulse {
+  0%, 100% {
+    opacity: 0.28;
+  }
+  50% {
+    opacity: 0.42;
+  }
+}
+
+/* Stat source citation */
+.landing-stat-source {
+  font-size: 0.7rem;
+  font-style: italic;
+  color: var(--color-text-muted);
+  opacity: 0.6;
+  margin-top: 12px;
+  line-height: 1.3;
 }

@@ -57,17 +57,20 @@ const stats = [
     value: "89",
     suffix: "%",
     label: "of employees never fully read their employment contract",
+    source: "Source: DocuSign State of the Industry Report",
   },
   {
     value: "3.2",
     suffix: "x",
     label: "more likely to face legal disputes without contract review",
+    source: "Source: American Bar Association 2023",
   },
   {
     value: "47000",
     prefix: "$",
     suffix: "",
     label: "average cost of a contract dispute for individuals",
+    source: "Source: Legal Services Corporation",
   },
 ];
 
@@ -103,11 +106,11 @@ const pipelineStages = [
 ];
 
 const radarData = [
-  { axis: "Financial Risk", typical: 65, protected: 20 },
-  { axis: "Privacy Exposure", typical: 70, protected: 15 },
-  { axis: "Power Balance", typical: 72, protected: 25 },
-  { axis: "Exit Freedom", typical: 68, protected: 18 },
-  { axis: "IP Ownership Risk", typical: 74, protected: 22 },
+  { axis: "Financial Risk", typical: 65, protected: 20, demo: 78 },
+  { axis: "Privacy Exposure", typical: 70, protected: 15, demo: 91 },
+  { axis: "Power Balance", typical: 72, protected: 25, demo: 89 },
+  { axis: "Exit Freedom", typical: 68, protected: 18, demo: 85 },
+  { axis: "IP Ownership Risk", typical: 74, protected: 22, demo: 94 },
 ];
 
 // ---------------------------------------------------------------------------
@@ -188,6 +191,22 @@ export default function LandingPage({ onEnter }) {
         {/* Pulsing radial gold glow behind headline */}
         <div className="landing-hero-glow" />
 
+        {/* Sharp concentrated glow directly behind headline text */}
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -60%)',
+          width: '24rem',
+          height: '8rem',
+          background: '#C8A97E',
+          opacity: 0.08,
+          filter: 'blur(60px)',
+          borderRadius: '50%',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }} />
+
         <div className="landing-hero-content">
           <motion.h1
             className="landing-hero-h1 font-display"
@@ -264,6 +283,7 @@ export default function LandingPage({ onEnter }) {
                 />
               </span>
               <span className="landing-stat-label font-body">{s.label}</span>
+              <span className="landing-stat-source">{s.source}</span>
             </motion.div>
           ))}
         </div>
@@ -285,27 +305,40 @@ export default function LandingPage({ onEnter }) {
 
         <div className="landing-pipeline">
           {pipelineStages.map((stage, i) => (
-            <motion.div
-              key={i}
-              className="landing-pipeline-row"
-              custom={i}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-40px" }}
-              variants={slideLeft}
-            >
-              <span className="landing-pipeline-num font-mono text-gradient">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <div className="landing-pipeline-info">
-                <span className="landing-pipeline-name font-display">
-                  {stage.name}
+            <React.Fragment key={i}>
+              <motion.div
+                className="landing-pipeline-row"
+                initial={{ opacity: 0, x: -40 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+              >
+                <span className="landing-pipeline-num font-mono text-gradient">
+                  {String(i + 1).padStart(2, "0")}
                 </span>
-                <span className="landing-pipeline-desc font-body">
-                  {stage.desc}
-                </span>
-              </div>
-            </motion.div>
+                <div className="landing-pipeline-info">
+                  <span className="landing-pipeline-name font-display">
+                    {stage.name}
+                  </span>
+                  <span className="landing-pipeline-desc font-body">
+                    {stage.desc}
+                  </span>
+                </div>
+              </motion.div>
+              {i < pipelineStages.length - 1 && (
+                <motion.div
+                  initial={{ scaleX: 0 }}
+                  whileInView={{ scaleX: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: i * 0.1 + 0.3 }}
+                  style={{
+                    height: 1,
+                    background: 'linear-gradient(90deg, #C8A97E, rgba(200,169,126,0.08))',
+                    transformOrigin: 'left',
+                  }}
+                />
+              )}
+            </React.Fragment>
           ))}
         </div>
       </section>
@@ -331,15 +364,26 @@ export default function LandingPage({ onEnter }) {
           viewport={{ once: true, margin: "-60px" }}
           variants={fadeUp}
         >
-          <ResponsiveContainer width="100%" height={420}>
+          <h3 style={{
+            textAlign: 'center',
+            fontFamily: "'Playfair Display', Georgia, serif",
+            fontSize: '1.1rem',
+            fontWeight: 600,
+            color: '#C8A97E',
+            marginBottom: 24,
+            letterSpacing: '-0.01em',
+          }}>
+            NovaTech Employment Agreement — Live Analysis
+          </h3>
+          <ResponsiveContainer width="100%" height={500}>
             <RadarChart cx="50%" cy="50%" outerRadius="72%" data={radarData}>
               <PolarGrid
-                stroke="rgba(200,169,126,0.12)"
+                stroke="rgba(200,169,126,0.3)"
                 strokeDasharray="3 3"
               />
               <PolarAngleAxis
                 dataKey="axis"
-                tick={{ fill: "#9A9490", fontSize: 12, fontFamily: "DM Sans" }}
+                tick={{ fill: "#9A9490", fontSize: 13, fontFamily: "DM Sans" }}
               />
               <PolarRadiusAxis
                 angle={90}
@@ -348,33 +392,45 @@ export default function LandingPage({ onEnter }) {
                 axisLine={false}
               />
               <Radar
-                name="Typical Employment Contract"
-                dataKey="typical"
+                name="This Demo Contract"
+                dataKey="demo"
                 stroke="#FF3B3B"
                 fill="#FF3B3B"
-                fillOpacity={0.18}
+                fillOpacity={0.28}
                 strokeWidth={2}
+                style={{ animation: 'radarDangerPulse 2s ease-in-out infinite' }}
+              />
+              <Radar
+                name="Typical Contract"
+                dataKey="typical"
+                stroke="#FF8C00"
+                fill="#FF8C00"
+                fillOpacity={0.16}
+                strokeWidth={1.5}
               />
               <Radar
                 name="LexGuard Protected"
                 dataKey="protected"
                 stroke="#C8A97E"
                 fill="#C8A97E"
-                fillOpacity={0.22}
+                fillOpacity={0.25}
                 strokeWidth={2}
               />
               <Legend
                 wrapperStyle={{
                   fontFamily: "DM Sans",
-                  fontSize: 13,
+                  fontSize: 12,
                   color: "#9A9490",
-                  paddingTop: 16,
+                  paddingTop: 20,
                 }}
+                formatter={(value) => (
+                  <span style={{ color: '#9A9490' }}>{value}</span>
+                )}
               />
             </RadarChart>
           </ResponsiveContainer>
           <p className="landing-radar-caption font-body">
-            Real data from a demo employment agreement analyzed by LexGuard.
+            Real data from the NovaTech demo contract analyzed by LexGuard's AI.
           </p>
         </motion.div>
       </section>
