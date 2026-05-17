@@ -51,9 +51,9 @@ const initialState = {
 };
 
 // -----------------------------------------------------------------------------
-// Reducer – pure function handling all state transitions
+// Reducer — pure function handling all state transitions
 // -----------------------------------------------------------------------------
-function reducer(state, action) {
+export function reducer(state = initialState, action) {
   switch (action.type) {
     case ActionTypes.SET_STATE:
       return { ...state, appState: action.payload };
@@ -119,6 +119,8 @@ function reducer(state, action) {
       return state;
   }
 }
+
+export { reducer, AppStates };
 
 /**
  * Custom hook that drives the entire LexGuard analysis workflow.
