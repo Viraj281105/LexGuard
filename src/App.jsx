@@ -1,4 +1,5 @@
 import React, { useCallback, lazy, Suspense, useReducer } from "react";
+import { Scale } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { analyzeContract } from "./lib/ai";
 import { useAnalysis } from "./hooks/useAnalysis";
@@ -21,10 +22,13 @@ const ErrorScreen = ({ errorMessage, onDismiss }) => (
 
 // Header component – persistent across screens
 const Header = () => (
-  <header className="fixed top-0 left-0 right-0 h-12 flex items-center px-4 bg-surface-glass backdrop-blur-md z-10">
-    <span className="text-2xl mr-2">⚖️</span>
-    <h1 className="text-2xl font-playfair text-text-gradient mr-2">LexGuard</h1>
-    <span className="text-sm text-text-muted">Read before you bleed.</span>
+  <header className="fixed top-0 left-0 right-0 z-50" style={{ height: 56, background: '#0A0A0F', borderBottom: '1px solid #22222E' }}>
+    <div className="flex items-center h-full" style={{ padding: '0 24px' }}>
+      <Scale size={20} strokeWidth={1.8} style={{ color: '#C8A97E', flexShrink: 0 }} />
+      <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, color: '#C8A97E', fontSize: '1.2rem', marginLeft: 10 }}>LexGuard</h1>
+      <span style={{ color: '#9A9490', margin: '0 10px', fontSize: '0.6rem' }}>●</span>
+      <span style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: '0.82rem', color: '#9A9490' }}>Read before you bleed.</span>
+    </div>
   </header>
 );
 
@@ -105,7 +109,7 @@ const App = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.4 }}
-          className={isLanding ? "" : "pt-12 flex items-center justify-center"}
+          className={isLanding ? "" : "pt-14 flex items-center justify-center"}
         >
           {renderScreen()}
 

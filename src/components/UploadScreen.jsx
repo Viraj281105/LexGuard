@@ -56,33 +56,33 @@ export default function UploadScreen({ onFileUpload, onTextSubmit, onLoadDemo })
   };
 
   return (
-    <motion.div className="flex flex-col h-full" initial="hidden" animate="visible" variants={containerVariants}>
+    <motion.div className="flex flex-col min-h-screen items-center justify-center py-8" initial="hidden" animate="visible" variants={containerVariants}>
       {/* SECTION 1 – HERO */}
-      <motion.div className="flex flex-col items-center justify-center flex-[35%] text-center px-4" custom={0} variants={heroVariants}>
+      <motion.div className="flex flex-col items-center justify-center text-center px-4 mb-6" custom={0} variants={heroVariants}>
         <motion.h1 className="text-5xl md:text-6xl font-playfair font-bold" custom={0} variants={heroVariants}>
           Your contract has secrets.
         </motion.h1>
         <motion.h2 className={clsx("mt-2 text-4xl md:text-5xl font-playfair font-bold", goldGradient)} custom={1} variants={heroVariants}>
           We find them.
         </motion.h2>
-        <motion.p className="mt-4 max-w-2xl text-text-muted" custom={2} variants={heroVariants}>
+        <motion.p className="mt-3 max-w-2xl text-lg text-text-muted" custom={2} variants={heroVariants}>
           Paste your contract, upload a PDF, or load a demo — LexGuard's AI identifies every clause designed to hurt you.
         </motion.p>
       </motion.div>
 
       {/* SECTION 2 – INPUT ZONE */}
-      <motion.div className="flex flex-col items-center justify-center flex-[45%] px-6" custom={3} variants={heroVariants}>
-        {/* Tab headers */}
-        <div className="flex space-x-8 mb-6 border-b border-white/20">
+      <motion.div className="flex flex-col items-center w-full max-w-2xl mx-auto px-6" custom={3} variants={heroVariants}>
+        {/* Tab headers — pill switcher */}
+        <div className="flex p-1 mb-6 rounded-lg" style={{ background: '#111118', border: '1px solid #22222E' }}>
           {tabs.map((title, idx) => (
             <button
               key={title}
               onClick={() => setActiveTab(idx)}
               className={clsx(
-                "pb-2 text-sm font-medium",
+                "px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200",
                 activeTab === idx
-                  ? `${goldGradient} border-b-2 border-gold-500`
-                  : "text-text-muted hover:text-white"
+                  ? "text-[#C8A97E] bg-[#1A1A24]"
+                  : "text-[#9A9490] bg-transparent hover:text-white"
               )}
             >
               {title}
@@ -91,12 +91,12 @@ export default function UploadScreen({ onFileUpload, onTextSubmit, onLoadDemo })
         </div>
 
         {/* Tab content */}
-        <div className="w-full max-w-xl bg-surface-glass backdrop-blur-md rounded-xl p-6 flex flex-col items-center">
+        <div className="w-full surface-glass rounded-2xl p-8 flex flex-col items-center">
           {activeTab === 0 && (
             <>
               <div
                 className={clsx(
-                  "w-full h-48 border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-center cursor-pointer transition-colors",
+                  "w-full h-56 border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-center cursor-pointer transition-colors",
                   dragActive ? "border-gold-500 bg-gold-500/10" : "border-gold-500 hover:border-gold-400 hover:bg-gold-500/5"
                 )}
                 onDragOver={handleDragOver}
@@ -105,9 +105,9 @@ export default function UploadScreen({ onFileUpload, onTextSubmit, onLoadDemo })
                 onClick={triggerFileSelect}
               >
                 <Upload className="w-12 h-12 text-gold-500 mb-2" />
-                <p className="font-medium">Drag &amp; Drop your contract here</p>
-                <p className="text-xs text-text-muted mt-1">or click to browse</p>
-                <p className="text-xs text-text-muted mt-2">PDF up to 10MB</p>
+                <p className="text-lg font-medium">Drag &amp; Drop your contract here</p>
+                <p className="text-sm text-text-muted mt-1">or click to browse</p>
+                <p className="text-sm text-text-muted mt-2">PDF up to 10MB</p>
                 <input
                   type="file"
                   accept="application/pdf"
@@ -120,7 +120,7 @@ export default function UploadScreen({ onFileUpload, onTextSubmit, onLoadDemo })
                 <div className="mt-4 w-full flex items-center justify-between bg-surface-glass backdrop-blur-md rounded px-4 py-2">
                   <div className="flex items-center space-x-2">
                     <FileText className="w-5 h-5 text-gold-500" />
-                    <span className="text-sm truncate">{file.name}</span>
+                    <span className="text-base truncate">{file.name}</span>
                   </div>
                   <button
                     onClick={handleAnalyzeFile}
@@ -142,7 +142,7 @@ export default function UploadScreen({ onFileUpload, onTextSubmit, onLoadDemo })
                 placeholder="Paste your employment agreement, terms of service, freelance contract, or any legal document here..."
               />
               <div className="w-full flex justify-between items-center mt-2">
-                <span className="text-xs text-text-muted">{text.length} characters</span>
+                <span className="text-sm text-text-muted">{text.length} characters</span>
                 <button
                   onClick={handleAnalyzeText}
                   disabled={text.trim().length < 100}
@@ -162,11 +162,11 @@ export default function UploadScreen({ onFileUpload, onTextSubmit, onLoadDemo })
           {activeTab === 2 && (
             <>
               <div className="w-full text-center space-y-4">
-                <h3 className="text-xl font-medium">{DEMO_METADATA.title}</h3>
-                <div className="inline-flex items-center bg-red-600 text-white rounded-full px-3 py-1 text-sm">
+                <h3 className="text-2xl font-medium">{DEMO_METADATA.title}</h3>
+                <div className="inline-flex items-center bg-red-600 text-white rounded-full px-3 py-1 text-base">
                   Contains 7 intentionally harmful clauses
                 </div>
-                <p className="text-text-muted text-sm max-w-md mx-auto">
+                <p className="text-text-muted text-base max-w-md mx-auto">
                   Experience LexGuard on a realistic employment contract pre-loaded with dangerous clauses — no upload needed.
                 </p>
                 <button
@@ -182,7 +182,7 @@ export default function UploadScreen({ onFileUpload, onTextSubmit, onLoadDemo })
       </motion.div>
 
       {/* SECTION 3 – FOOTER */}
-      <motion.div className="flex flex-col items-center justify-center flex-[20%]" custom={4} variants={heroVariants}>
+      <motion.div className="flex flex-col items-center justify-center mt-8" custom={4} variants={heroVariants}>
         <div className="flex space-x-8">
           <div className="flex flex-col items-center bg-surface-glass backdrop-blur-md rounded px-4 py-2">
             <Shield className="w-6 h-6 text-gold-500" />

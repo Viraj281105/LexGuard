@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import { Shield } from "lucide-react";
+import { Scale } from "lucide-react";
 
 // ---------------------------------------------------------------------------
 // Reusable animated counter component — counts up when in view
@@ -162,13 +162,15 @@ function GoldButton({ children, onClick, floating = false }) {
 // ---------------------------------------------------------------------------
 export default function LandingPage({ onEnter }) {
   return (
-    <div className="landing-root">
+    <div className="landing-root" style={{ position: 'relative', zIndex: 1 }}>
       {/* ── Fixed Navbar ── */}
-      <nav className="landing-navbar">
-        <div className="landing-navbar-inner">
-          <div className="landing-navbar-brand">
-            <Shield size={20} strokeWidth={1.8} style={{ color: "var(--color-brand)" }} />
-            <span className="landing-navbar-logo text-gradient">LexGuard</span>
+      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, height: 56, background: '#0A0A0F', borderBottom: '1px solid #22222E' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', height: '100%' }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Scale size={20} strokeWidth={1.8} style={{ color: '#C8A97E', flexShrink: 0 }} />
+            <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 600, color: '#C8A97E', fontSize: '1.2rem', marginLeft: 10 }}>LexGuard</span>
+            <span style={{ color: '#9A9490', margin: '0 10px', fontSize: '0.6rem' }}>●</span>
+            <span style={{ fontFamily: "'DM Sans', system-ui, sans-serif", fontSize: '0.82rem', color: '#9A9490' }}>Read before you bleed.</span>
           </div>
           <button onClick={onEnter} className="landing-navbar-cta">
             Analyze Contract
@@ -179,7 +181,7 @@ export default function LandingPage({ onEnter }) {
       {/* ═══════════════════════════════════════════════════════════════════
           SECTION 1 — HERO
           ═══════════════════════════════════════════════════════════════════ */}
-      <section className="landing-hero bg-grid" id="hero">
+      <section className="landing-hero bg-grid" id="hero" style={{ paddingTop: 56 }}>
         {/* Scan line overlay */}
         <div className="scan-line" />
 
