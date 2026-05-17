@@ -171,7 +171,7 @@ export default function UploadScreen({ onFileUpload, onTextSubmit, onLoadDemo })
                 </p>
                 <button
                   onClick={onLoadDemo}
-                  className="mt-2 px-6 py-2 bg-gold-500 text-black rounded transition-colors hover:bg-gold-600"
+                  className="mt-2 px-8 py-3 bg-transparent text-[#C8A97E] border border-[#C8A97E] rounded-lg transition-colors duration-200 hover:bg-[#C8A97E] hover:text-black"
                 >
                   Analyze Demo Contract
                 </button>

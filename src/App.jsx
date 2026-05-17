@@ -6,29 +6,10 @@ import LandingPage from "./components/LandingPage";
 import UploadScreen from "./components/UploadScreen";
 import PipelineScreen from "./components/PipelineScreen";
 
+import DashboardScreen from "./components/DashboardScreen";
 
 // Stub components to prevent crashes during development
 
-
-
-
-const DashboardScreen = ({ analysisResult, fileName, isPlainEnglish, onTogglePlainEnglish, onReset }) => (
-  <div className="flex flex-col items-center justify-center h-full text-white">
-    <h2 className="text-2xl mb-4">Dashboard — Step 10</h2>
-    {analysisResult && (
-      <p className="mb-2">Overall Score: {analysisResult.overallScore}</p>
-    )}
-    <button
-      onClick={onTogglePlainEnglish}
-      className="px-4 py-2 bg-brand-glow text-black rounded mb-2"
-    >
-      Toggle Plain English ({isPlainEnglish ? "On" : "Off"})
-    </button>
-    <button onClick={onReset} className="px-4 py-2 bg-red-600 rounded">
-      Reset
-    </button>
-  </div>
-);
 const ErrorScreen = ({ errorMessage, onDismiss }) => (
   <div className="flex flex-col items-center justify-center h-full text-white">
     <p className="mb-4 text-red-400">Error: {errorMessage}</p>
